@@ -1,20 +1,20 @@
 package com.hometail.authservice.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hometail.authservice.domain.Account;
+import com.hometail.authservice.dto.LoginRequestDto;
 import com.hometail.authservice.dto.RestResponse;
-import com.hometail.authservice.dto.SignupDto;
+import com.hometail.authservice.dto.SignupRequestDto;
 import com.hometail.authservice.service.AuthService;
 import com.hometail.authservice.utils.CustomValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
@@ -24,20 +24,20 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/accounts")
-    public ResponseEntity<RestResponse> signup(@RequestBody SignupDto dto) throws MethodArgumentNotValidException {
+    public ResponseEntity<RestResponse> signup(@Valid SignupRequestDto dto) {
 
-        CustomValidator validator = new CustomValidator();
-        validator.validSignupDto(dto);
-        Account account = authService.addAccount(dto.toEntity(passwordEncoder));
-        return new ResponseEntity<RestResponse>(RestResponse.builder()
-                .code("200")
-                .data(account)
+        return new ResponseEntity<>(RestResponse.builder()
+                .status(200)
+                .data(authService.addAccount(dto.toEntity(passwordEncoder)))
                 .build(), HttpStatus.OK);
     }
 
-    @GetMapping("/login")
-    public ResponseEntity login() {
+    @PostMapping("/login")
+    public ResponseEntity<RestResponse> login(@Valid LoginRequestDto dto) {
 
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(RestResponse.builder()
+                .status(200)
+                .data(authService.login(dto.toEntity()))
+                .build(), HttpStatus.OK);
     }
 }

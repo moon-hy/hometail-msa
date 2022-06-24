@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 
@@ -50,5 +51,10 @@ public class Account extends BaseTimeEntity{
 
     public void withdrawal() {
         this.isActivate = false;
+    }
+
+    public boolean isValidPassword(PasswordEncoder passwordEncoder, String rawPassword) {
+
+        return passwordEncoder.matches(rawPassword, this.password);
     }
 }
