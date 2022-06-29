@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -82,12 +85,8 @@ public class JwtProvider {
         return authorization.substring(7);
     }
 
-    public Date getExpiresInByJwt(String jwt) {
-        return getClaimsByJwt(jwt).getExpiration();
-    }
-
-    public int getExpiresInSecondsByJwt(String jwt) {
-        return (int) getExpiresInByJwt(jwt).getTime() / 1000;
+    public Long getExpiresInByJwt(String jwt) {
+        return getClaimsByJwt(jwt).getExpiration().getTime();
     }
 
     public String getRefreshTokenIdByJwt(String jwt) {

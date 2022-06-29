@@ -1,6 +1,5 @@
 package com.hometail.authservice.dto.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 

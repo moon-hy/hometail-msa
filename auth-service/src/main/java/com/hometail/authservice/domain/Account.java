@@ -21,9 +21,6 @@ public class Account {
     @Setter
     private String password;
 
-    @Column(nullable = false)
-    private String nickname;
-
     @Builder.Default
     private Role role = Role.ROLE_USER;
 

@@ -21,12 +21,6 @@ public class CookieProvider {
 
     public ResponseCookie createJwtRefreshTokenCookie(String refreshToken) {
 
-//        Cookie cookie = new Cookie(REFRESH_TOKEN_NAME, refreshToken);
-//        cookie.setHttpOnly(true);
-//        cookie.setSecure(false);
-//        cookie.setMaxAge(jwtProvider.getExpiresInSecondsByJwt(refreshToken));
-//        cookie.setPath("/");
-
         return ResponseCookie.from(REFRESH_TOKEN_NAME, refreshToken)
                 .httpOnly(true)
                 .secure(false)
