@@ -3,24 +3,26 @@ package com.hometail.authservice.dto;
 import com.hometail.authservice.domain.Account;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @Getter
+@Setter
 @AllArgsConstructor
 public class LoginRequestDto {
 
-    @NotBlank(message = "이메일을 입력해주세요.")
+    @NotBlank
+    @Email
     private String email;
 
-    @NotBlank(message = "비밀번호를 입력해주세요.")
+    @NotBlank
     private String password;
 
     public Account toEntity() {
-
         return Account.builder()
                 .email(email)
-                .password(password)
-                .build();
+                .password(password).build();
     }
 }

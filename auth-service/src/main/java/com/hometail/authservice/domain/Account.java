@@ -1,60 +1,32 @@
 package com.hometail.authservice.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicInsert;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
-@DynamicInsert
+@Getter
 @Entity
-public class Account extends BaseTimeEntity{
+public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Setter
+    private String password;
 
     @Column(nullable = false)
     private String nickname;
 
-    private String password;
+    @Builder.Default
+    private Role role = Role.ROLE_USER;
 
     @Builder.Default
-    @Column(columnDefinition = "varchar(32) default 'USER'")
-    private String role = "USER";
-
-    @Builder.Default
-    @Column(columnDefinition = "boolean default TRUE")
-    private Boolean isActivate = true;
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public void withdrawal() {
-        this.isActivate = false;
-    }
-
-    public boolean isValidPassword(PasswordEncoder passwordEncoder, String rawPassword) {
-
-        return passwordEncoder.matches(rawPassword, this.password);
-    }
+    private boolean activated = false;
 }

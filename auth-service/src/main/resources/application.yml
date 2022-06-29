@@ -1,6 +1,4 @@
 spring:
-  config:
-    import: optional:secrets.yml
 
   datasource:
     url: jdbc:h2:mem:test;MODE=MYSQL
@@ -23,6 +21,7 @@ spring:
 
   jackson:
     default-property-inclusion: non_null
+    property-naming-strategy: SNAKE_CASE
 
   web:
     resources:
@@ -30,6 +29,9 @@ spring:
 
   mvc:
     throw-exception-if-no-handler-found: true
+
+  profiles:
+    include: secrets
 
 server:
   error:

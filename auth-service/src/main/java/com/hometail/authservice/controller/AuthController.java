@@ -2,42 +2,77 @@ package com.hometail.authservice.controller;
 
 import com.hometail.authservice.domain.Account;
 import com.hometail.authservice.dto.LoginRequestDto;
-import com.hometail.authservice.dto.RestResponse;
+import com.hometail.authservice.dto.RestResponseDto;
 import com.hometail.authservice.dto.SignupRequestDto;
-import com.hometail.authservice.service.AuthService;
-import com.hometail.authservice.utils.CustomValidator;
+import com.hometail.authservice.service.AccountService;
+import com.hometail.authservice.service.RefreshTokenService;
+import com.hometail.authservice.utils.CookieProvider;
+import com.hometail.authservice.utils.JwtProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
 public class AuthController {
 
-    private final AuthService authService;
-    private final PasswordEncoder passwordEncoder;
+    private final AccountService accountService;
+    private final JwtProvider jwtProvider;
+    private final CookieProvider cookieProvider;
 
-    @PostMapping("/accounts")
-    public ResponseEntity<RestResponse> signup(@Valid SignupRequestDto dto) {
+    //
+    private final RefreshTokenService refreshTokenService;
 
-        return new ResponseEntity<>(RestResponse.builder()
-                .status(200)
-                .data(authService.addAccount(dto.toEntity(passwordEncoder)))
-                .build(), HttpStatus.OK);
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@Valid SignupRequestDto dto) {
+
+        accountService.addAccount(dto.toEntity());
+        // login 으로 리다이렉트
+        return login(new LoginRequestDto(dto.getEmail(), dto.getPassword()));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<RestResponse> login(@Valid LoginRequestDto dto) {
+    public ResponseEntity<?> login(@Valid LoginRequestDto dto) {
 
-        return new ResponseEntity<>(RestResponse.builder()
-                .status(200)
-                .data(authService.login(dto.toEntity()))
-                .build(), HttpStatus.OK);
+        // request의 email, password 받은 entity 생성, accessToken 생성
+        Account account = accountService.getAccount(dto.toEntity());
+        String accessToken = jwtProvider.createJwtAccessToken(account.getId());
+
+        // refreshToken 생성, 쿠키에 저장
+        String refreshToken = jwtProvider.createJwtRefreshToken();
+        ResponseCookie responseCookie = cookieProvider.createJwtRefreshTokenCookie(refreshToken);
+
+        // refreshToken 저장
+        String refreshTokenId = jwtProvider.getClaimsByJwt(refreshToken).getId();
+        refreshTokenService.addRefreshToken(account.getId(), refreshTokenId);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+                .body(RestResponseDto.builder()
+                        .httpStatus(HttpStatus.OK)
+                        .data(jwtProvider.toDto(accessToken)).build());
+    }
+
+    @PostMapping("/reissue")
+    public ResponseEntity<?> reissue(HttpServletRequest request) {
+
+        // parse the request
+        String accessToken = jwtProvider.parseRequest(request);
+        String refreshToken = cookieProvider.parseRequest(request);
+
+        // 새로운 access token 생성
+        String newAccessToken = jwtProvider.reissueAccessTokenWithRefreshToken(accessToken, refreshToken);
+
+        return ResponseEntity.ok()
+                .body(RestResponseDto.builder()
+                        .httpStatus(HttpStatus.OK)
+                        .data(jwtProvider.toDto(newAccessToken)));
     }
 }
