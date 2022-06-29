@@ -1,6 +1,5 @@
 package com.hometail.authservice.utils;
 
-import com.hometail.authservice.domain.Account;
 import com.hometail.authservice.dto.TokenDto;
 import com.hometail.authservice.exception.InvalidRequestException;
 import com.hometail.authservice.service.RefreshTokenService;
@@ -35,11 +34,12 @@ public class JwtProvider {
         Claims claims = Jwts.claims().setSubject(id.toString());
         claims.setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRED_TIME));
         claims.setIssuedAt(new Date());
+        claims.put("role", "ROLE_USER");
 
         String accessToken = Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .addClaims(claims)
-                .signWith(Keys.hmacShaKeyFor(getByteSecret(SECRET_KEY)), SignatureAlgorithm.HS512).compact();
+                .signWith(Keys.hmacShaKeyFor(getByteSecret()), SignatureAlgorithm.HS512).compact();
 
         return accessToken;
     }
@@ -51,20 +51,20 @@ public class JwtProvider {
 
         String refreshToken = Jwts.builder()
                 .addClaims(claims)
-                .signWith(Keys.hmacShaKeyFor(getByteSecret(SECRET_KEY)), SignatureAlgorithm.HS512).compact();
+                .signWith(Keys.hmacShaKeyFor(getByteSecret()), SignatureAlgorithm.HS512).compact();
 
         return refreshToken;
     }
 
-    private byte[] getByteSecret(String secret) {
-        return DatatypeConverter.parseBase64Binary(secret);
+    private byte[] getByteSecret() {
+        return DatatypeConverter.parseBase64Binary(SECRET_KEY);
     }
 
     public Claims getClaimsByJwt(String jwt) {
 
         try {
             return Jwts.parserBuilder()
-                    .setSigningKey(getByteSecret(SECRET_KEY)).build()
+                    .setSigningKey(getByteSecret()).build()
                     .parseClaimsJws(jwt).getBody();
         } catch (ExpiredJwtException exception) {
             return exception.getClaims();
