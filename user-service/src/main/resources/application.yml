@@ -1,0 +1,49 @@
+server:
+  port: 8082
+
+  error:
+    whitelabel:
+      enabled: false
+
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka/
+
+spring:
+  application:
+    name: user-service
+
+  datasource:
+    url: jdbc:h2:mem:test;MODE=MYSQL
+    username: root
+    password:
+    driver-class-name: org.h2.Driver
+
+  h2:
+    console:
+      enabled: true
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format-sql: true
+    database-platform: org.hibernate.dialect.MySQL57Dialect
+
+  jackson:
+    default-property-inclusion: non_null
+    property-naming-strategy: SNAKE_CASE
+
+  web:
+    resources:
+      add-mappings: false
+
+  mvc:
+    throw-exception-if-no-handler-found: true
+
+  profiles:
+    include: secrets
+
