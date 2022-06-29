@@ -3,7 +3,6 @@ package com.hometail.authservice.service;
 import com.hometail.authservice.domain.RefreshToken;
 import com.hometail.authservice.exception.InvalidRequestException;
 import com.hometail.authservice.repository.RefreshTokenRepository;
-import com.hometail.authservice.utils.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class RefreshTokenService {
 
-    private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
     public String addRefreshToken(Long accountId, String tokenId) {

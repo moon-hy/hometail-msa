@@ -35,7 +35,6 @@ public class JwtProvider {
         Claims claims = Jwts.claims().setSubject(id.toString());
         claims.setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRED_TIME));
         claims.setIssuedAt(new Date());
-//        claims.setIssuer(uri);
 
         String accessToken = Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
@@ -43,10 +42,6 @@ public class JwtProvider {
                 .signWith(Keys.hmacShaKeyFor(getByteSecret(SECRET_KEY)), SignatureAlgorithm.HS512).compact();
 
         return accessToken;
-//        return TokenDto.builder()
-//                .tokenType("Bearer")
-//                .accessToken(accessToken)
-//                .expiresIn(claims.getExpiration()).build();
     }
 
     public String createJwtRefreshToken() {
@@ -59,9 +54,6 @@ public class JwtProvider {
                 .signWith(Keys.hmacShaKeyFor(getByteSecret(SECRET_KEY)), SignatureAlgorithm.HS512).compact();
 
         return refreshToken;
-//        return TokenDto.builder()
-//                .refreshToken(refreshToken)
-//                .expiresIn(claims.getExpiration()).build();
     }
 
     private byte[] getByteSecret(String secret) {
@@ -82,8 +74,8 @@ public class JwtProvider {
     public String parseRequest(HttpServletRequest request) {
 
         String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-        Account account = null;
-        if (authorization == null || authorization.startsWith("Bearer ")) {
+
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
             throw InvalidRequestException.NotExistsAccessToken;
         }
 
@@ -91,22 +83,18 @@ public class JwtProvider {
     }
 
     public Date getExpiresInByJwt(String jwt) {
-
         return getClaimsByJwt(jwt).getExpiration();
     }
 
     public int getExpiresInSecondsByJwt(String jwt) {
-
         return (int) getExpiresInByJwt(jwt).getTime() / 1000;
     }
 
     public String getRefreshTokenIdByJwt(String jwt) {
-
         return getClaimsByJwt(jwt).getId();
     }
 
     public Long getAccountIdByJwt(String jwt) {
-
         return Long.parseLong(getClaimsByJwt(jwt).getSubject());
     }
 

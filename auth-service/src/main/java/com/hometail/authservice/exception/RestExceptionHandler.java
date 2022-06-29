@@ -1,6 +1,6 @@
 package com.hometail.authservice.exception;
 
-import com.hometail.authservice.dto.ErrorResponseDto;
+import com.hometail.authservice.dto.response.ErrorResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

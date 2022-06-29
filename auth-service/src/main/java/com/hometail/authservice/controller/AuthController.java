@@ -1,9 +1,9 @@
 package com.hometail.authservice.controller;
 
 import com.hometail.authservice.domain.Account;
-import com.hometail.authservice.dto.LoginRequestDto;
-import com.hometail.authservice.dto.RestResponseDto;
-import com.hometail.authservice.dto.SignupRequestDto;
+import com.hometail.authservice.dto.request.LoginRequestDto;
+import com.hometail.authservice.dto.request.SignupRequestDto;
+import com.hometail.authservice.dto.response.RestResponseDto;
 import com.hometail.authservice.service.AccountService;
 import com.hometail.authservice.service.RefreshTokenService;
 import com.hometail.authservice.utils.CookieProvider;
@@ -73,6 +73,6 @@ public class AuthController {
         return ResponseEntity.ok()
                 .body(RestResponseDto.builder()
                         .httpStatus(HttpStatus.OK)
-                        .data(jwtProvider.toDto(newAccessToken)));
+                        .data(jwtProvider.toDto(newAccessToken)).build());
     }
 }
