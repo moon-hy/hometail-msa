@@ -2,6 +2,9 @@ package com.hometail.gatewayservice.filter;
 
 import com.hometail.gatewayservice.dto.TokenUser;
 import com.hometail.gatewayservice.util.JwtUtils;
+
+import lombok.Setter;
+
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -28,6 +31,11 @@ public class JwtAuthenticationGatewayFilterFactory extends
         this.jwtUtils = jwtUtils;
     }
 
+    @Setter
+    public static class Config {
+        private String role;
+    }
+
     @Override
     public GatewayFilter apply(Config config) {
         return ((exchange, chain) -> {
@@ -38,19 +46,20 @@ public class JwtAuthenticationGatewayFilterFactory extends
                 return onError(response, "Missing Authorization Header", HttpStatus.BAD_REQUEST);
             }
 
-            String token = extractToken(request);
-            if (!jwtUtils.isValid(token)) {
+            String authorization = getAuthorization(request).trim();
+            if (!jwtUtils.isValid(authorization)) {
                 return onError(response, "Invalid Authorization Header", HttpStatus.BAD_REQUEST);
             }
 
+            String token = authorization.substring(7);
             TokenUser tokenUser = jwtUtils.decode(token);
+            System.out.println(tokenUser.getRole() + config.role);
             if (!hasRole(tokenUser, config.role)) {
                 return onError(response, "invalid role", HttpStatus.FORBIDDEN);
             }
 
             addAuthorizationHeaders(request, tokenUser);
-
-            return chain.filter(exchange);
+            return chain.filter(exchange.mutate().request(request).build());
         });
     }
 
@@ -74,7 +83,7 @@ public class JwtAuthenticationGatewayFilterFactory extends
         return request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION);
     }
 
-    private String extractToken(ServerHttpRequest request) {
+    private String getAuthorization(ServerHttpRequest request) {
         return request.getHeaders().getOrEmpty(HttpHeaders.AUTHORIZATION).get(0);
     }
 
@@ -84,7 +93,4 @@ public class JwtAuthenticationGatewayFilterFactory extends
         return response.writeWith(Mono.just(buffer));
     }
 
-    public static class Config {
-        private String role;
-    }
 }

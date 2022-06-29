@@ -4,7 +4,6 @@ import com.hometail.gatewayservice.dto.TokenUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,17 +29,22 @@ public class JwtUtils implements InitializingBean {
     }
 
     public TokenUser decode(String token) {
-        return new TokenUser(
-                Long.parseLong(extractToken(token).getSubject()),
-                extractToken(token).get("role").toString()
-        );
+        Claims claims = extractToken(token);
+
+        return TokenUser.builder()
+                .id(Long.parseLong(claims.getSubject()))
+                .role(claims.get("role").toString()).build();
     }
 
-    public boolean isValid(String token) {
+    public boolean isValid(String authorization) {
         try {
-            extractToken(token);
+            if (authorization == null || !authorization.startsWith("Bearer ")){
+                throw new JwtException("Invalid Authorization Header");
+            }
+            extractToken(authorization.substring(7));
             return true;
         } catch (JwtException e) {
+            System.out.println(e.getMessage());
             return false;
         }
     }
