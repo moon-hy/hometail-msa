@@ -1,21 +1,21 @@
-package com.hometail.authservice.dto;
+package com.hometail.authservice.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public class RestResponseDto {
+public class ErrorResponseDto {
 
     private final int status;
     private final String message;
-    private final Object data;
+    private final String detail;
 
     @Builder
-    public RestResponseDto(HttpStatus httpStatus, Object data) {
+    public ErrorResponseDto(HttpStatus httpStatus, Exception exception) {
 
         this.status = httpStatus.value();
         this.message = httpStatus.name();
-        this.data = data;
+        this.detail = exception.getMessage();
     }
 }
