@@ -13,9 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -53,7 +51,7 @@ public class AuthController {
 
         // refreshToken 저장
         String refreshTokenId = jwtProvider.getClaimsByJwt(refreshToken).getId();
-        refreshTokenService.addRefreshToken(account.getId(), refreshTokenId);
+        refreshTokenService.updateRefreshToken(account.getId(), refreshTokenId);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
@@ -63,18 +61,30 @@ public class AuthController {
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<?> reissue(HttpServletRequest request) {
+    public ResponseEntity<?> reissue(HttpServletRequest request,
+                                     @RequestHeader("X-Authorization-Id") Long accountId) {
 
         // parse the request
-        String accessToken = jwtProvider.parseRequest(request);
         String refreshToken = cookieProvider.parseRequest(request);
 
         // 새로운 access token 생성
-        String newAccessToken = jwtProvider.reissueAccessTokenWithRefreshToken(accessToken, refreshToken);
+        String newAccessToken = refreshTokenService.reissueAccessToken(accountId, refreshToken);
 
         return ResponseEntity.ok()
                 .body(RestResponseDto.builder()
                         .httpStatus(HttpStatus.OK)
                         .data(jwtProvider.toDto(newAccessToken)).build());
+    }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request,
+                                    @RequestHeader("X-Authorization-Id") Long accountId) {
+
+        refreshTokenService.removeRefreshTokenByAccountId(accountId);
+        ResponseCookie cookie = cookieProvider.removeJwtRefreshTokenCookie();
+
+        return ResponseEntity.noContent()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .build();
     }
 }
