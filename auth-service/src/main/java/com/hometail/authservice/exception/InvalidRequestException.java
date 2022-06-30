@@ -6,6 +6,9 @@ public class InvalidRequestException extends RuntimeException {
     public static InvalidRequestException NotExistsEmail = new InvalidRequestException("이메일이 존재하지 않습니다.");
     public static InvalidRequestException NotExistsId = new InvalidRequestException("계정이 존재하지 않습니다.");
 
+    public static InvalidRequestException NotExistsRefreshTokenDb = new InvalidRequestException("리프레시 토큰 정보가 존재하지 않습니다.");
+    public static InvalidRequestException DuplicatedRefreshTokenDb = new InvalidRequestException("리프레시 토큰이 이미 등록되어 있습니다.");
+
     public static InvalidRequestException InvalidPassword = new InvalidRequestException("비밀번호가 유효하지 않습니다.");
 
     public static InvalidRequestException NotExistsAccessToken = new InvalidRequestException("엑세스 토큰이 존재하지 않습니다.");

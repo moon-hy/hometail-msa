@@ -17,6 +17,7 @@ public class RefreshToken {
     @Column(nullable = false)
     private Long accountId;
 
+    @Setter
     private String tokenId;
 
 }
