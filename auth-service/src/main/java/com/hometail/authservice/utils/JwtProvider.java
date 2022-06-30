@@ -31,8 +31,6 @@ public class JwtProvider {
     @Value("${token.secret-key}")
     private String SECRET_KEY;
 
-    private final RefreshTokenService refreshTokenService;
-
     public String createJwtAccessToken(Long id) {
         Claims claims = Jwts.claims().setSubject(id.toString());
         claims.setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRED_TIME));
@@ -74,17 +72,6 @@ public class JwtProvider {
         }
     }
 
-    public String parseRequest(HttpServletRequest request) {
-
-        String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-        if (authorization == null || !authorization.startsWith("Bearer ")) {
-            throw InvalidRequestException.NotExistsAccessToken;
-        }
-
-        return authorization.substring(7);
-    }
-
     public Long getExpiresInByJwt(String jwt) {
         return getClaimsByJwt(jwt).getExpiration().getTime();
     }
@@ -104,24 +91,5 @@ public class JwtProvider {
                 .accessToken(jwt)
                 .expiresIn(getExpiresInByJwt(jwt))
                 .build();
-    }
-
-    public String reissueAccessTokenWithRefreshToken(String accessToken, String refreshToken) {
-
-        String refreshTokenId = getRefreshTokenIdByJwt(refreshToken);
-
-        // 올바른 토큰 값인지 비교를 위해 accessToken 과 refreshToken 의 accountId 가져옴
-        Long accountId = getAccountIdByJwt(accessToken);
-        Long tokenAccountId = refreshTokenService.getAccountIdByRefreshTokenId(refreshTokenId);
-
-        // accountId 가 다를 경우 exception
-        if (!accountId.equals(tokenAccountId)) {
-            throw InvalidRequestException.BadRequest;
-        }
-
-        // 새로운 access token 생성
-        String newAccessToken = createJwtAccessToken(accountId);
-
-        return newAccessToken;
     }
 }

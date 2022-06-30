@@ -24,7 +24,7 @@ public class CookieProvider {
         return ResponseCookie.from(REFRESH_TOKEN_NAME, refreshToken)
                 .httpOnly(true)
                 .secure(false)
-                .maxAge(jwtProvider.getExpiresInSecondsByJwt(refreshToken))
+                .maxAge(jwtProvider.getExpiresInByJwt(refreshToken))
                 .path("/")
                 .build();
     }
