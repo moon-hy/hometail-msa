@@ -25,6 +25,7 @@ public class SecurityConfig {
                 .httpBasic().disable()
                 .csrf().disable();
 
+        http.headers().frameOptions().sameOrigin();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         return http.build();
