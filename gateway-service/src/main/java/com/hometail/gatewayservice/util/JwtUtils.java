@@ -36,19 +36,6 @@ public class JwtUtils implements InitializingBean {
                 .role(claims.get("role").toString()).build();
     }
 
-    public boolean isValid(String authorization) {
-        try {
-            if (authorization == null || !authorization.startsWith("Bearer ")){
-                throw new JwtException("Invalid Authorization Header");
-            }
-            extractToken(authorization.substring(7));
-            return true;
-        } catch (JwtException e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
-    }
-
     @Override
     public void afterPropertiesSet() throws Exception {
 

@@ -1,6 +1,8 @@
 package com.hometail.gatewayservice.filter;
 
 import com.hometail.gatewayservice.dto.TokenUser;
+import com.hometail.gatewayservice.exception.CustomHeaderException;
+import com.hometail.gatewayservice.exception.CustomJwtException;
 import com.hometail.gatewayservice.util.JwtUtils;
 
 import lombok.Setter;
@@ -24,6 +26,7 @@ public class JwtAuthenticationGatewayFilterFactory extends
         AbstractGatewayFilterFactory<JwtAuthenticationGatewayFilterFactory.Config> {
 
     private static final String ROLE_KEY = "role";
+    private static final String ROLE_ADMIN = "ROLE_ADMIN";
     private final JwtUtils jwtUtils;
 
     public JwtAuthenticationGatewayFilterFactory(JwtUtils jwtUtils) {
@@ -42,21 +45,11 @@ public class JwtAuthenticationGatewayFilterFactory extends
             ServerHttpRequest request = exchange.getRequest();
             ServerHttpResponse response = exchange.getResponse();
 
-            if (!containsAuthorization(request)) {
-                return onError(response, "Missing Authorization Header", HttpStatus.BAD_REQUEST);
-            }
+            String authorization = getAuthorization(request);
+            String token = getToken(authorization);
 
-            String authorization = getAuthorization(request).trim();
-            if (!jwtUtils.isValid(authorization)) {
-                return onError(response, "Invalid Authorization Header", HttpStatus.BAD_REQUEST);
-            }
-
-            String token = authorization.substring(7);
             TokenUser tokenUser = jwtUtils.decode(token);
-            System.out.println(tokenUser.getRole() + config.role);
-            if (!hasRole(tokenUser, config.role)) {
-                return onError(response, "invalid role", HttpStatus.FORBIDDEN);
-            }
+            checkRole(tokenUser, config.role);
 
             addAuthorizationHeaders(request, tokenUser);
             return chain.filter(exchange.mutate().request(request).build());
@@ -68,9 +61,10 @@ public class JwtAuthenticationGatewayFilterFactory extends
         return Collections.singletonList(ROLE_KEY);
     }
 
-    public boolean hasRole(TokenUser tokenUser, String role) {
-
-        return role.equals(tokenUser.getRole());
+    public void checkRole(TokenUser tokenUser, String role) {
+        if (!tokenUser.getRole().equals(ROLE_ADMIN) && !role.equals(tokenUser.getRole())) {
+            throw CustomJwtException.ROLE_NOT_MATCH;
+        }
     }
 
     private void addAuthorizationHeaders(ServerHttpRequest request, TokenUser tokenUser) {
@@ -79,12 +73,20 @@ public class JwtAuthenticationGatewayFilterFactory extends
                 .build();
     }
 
-    private boolean containsAuthorization(ServerHttpRequest request) {
-        return request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION);
+    private String getAuthorization(ServerHttpRequest request) {
+        try {
+            return request.getHeaders().getOrEmpty(HttpHeaders.AUTHORIZATION).get(0);
+        } catch (Exception e){
+            throw CustomHeaderException.MISSING_AUTHORIZATION;
+        }
     }
 
-    private String getAuthorization(ServerHttpRequest request) {
-        return request.getHeaders().getOrEmpty(HttpHeaders.AUTHORIZATION).get(0);
+    public String getToken(String authorization) {
+
+        if (authorization == null || !authorization.startsWith("Bearer ")){
+            throw CustomHeaderException.INVALID_AUTHORIZATION;
+        }
+        return authorization.substring(7);
     }
 
     private Mono<Void> onError(ServerHttpResponse response, String message, HttpStatus status) {
