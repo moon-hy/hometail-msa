@@ -1,5 +1,6 @@
 package com.hometail.authservice.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,6 +20,7 @@ public class Account {
     private String email;
 
     @Setter
+    @JsonIgnore
     private String password;
 
     @Builder.Default

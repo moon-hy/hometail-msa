@@ -77,8 +77,7 @@ public class AuthController {
     }
 
     @DeleteMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletRequest request,
-                                    @RequestHeader("X-Authorization-Id") Long accountId) {
+    public ResponseEntity<?> logout(@RequestHeader("X-Authorization-Id") Long accountId) {
 
         refreshTokenService.removeRefreshTokenByAccountId(accountId);
         ResponseCookie cookie = cookieProvider.removeJwtRefreshTokenCookie();
@@ -86,5 +85,16 @@ public class AuthController {
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .build();
+    }
+
+    @GetMapping("/account")
+    public ResponseEntity<?> account(@RequestHeader("X-Authorization-Id") Long accontId) {
+
+        Account account = accountService.getAccountById(accontId);
+        System.out.println(account.toString());
+        return ResponseEntity.ok()
+                .body(RestResponseDto.builder()
+                        .httpStatus(HttpStatus.OK)
+                        .data(account).build());
     }
 }
