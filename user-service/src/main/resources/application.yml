@@ -47,3 +47,6 @@ spring:
   profiles:
     include: secrets
 
+lombok:
+  anyConstructor:
+    addConstructorProperties: true

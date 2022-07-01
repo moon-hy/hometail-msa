@@ -1,22 +1,23 @@
 package com.hometail.userservice.controller;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.hometail.userservice.dto.response.RestResponseDto;
+import com.hometail.userservice.service.ProfileService;
+
+import lombok.RequiredArgsConstructor;
 
 @RequestMapping("/user-service")
+@RequiredArgsConstructor
 @RestController
 public class UserController {
 
+    private final ProfileService profileService;
+
     @GetMapping("/profile")
-    public ResponseEntity<?> getProfile(@RequestHeader("X-Authorization-Id") String accountId) {
+    public ResponseEntity<?> getProfile(@RequestHeader("Authorization") String authorization) {
 
         return ResponseEntity.ok()
-                .body(RestResponseDto.builder()
-                        .httpStatus(HttpStatus.OK)
-                        .data(accountId)
-                        .build());
+                .body(profileService.getAccountInfo(authorization));
     }
 }

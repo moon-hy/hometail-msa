@@ -1,18 +1,19 @@
 package com.hometail.userservice.dto.response;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public class RestResponseDto {
+@Setter
+@NoArgsConstructor
+public class RestResponseDto<T> {
 
-    private final int status;
-    private final String message;
-    private final Object data;
+    private int status;
+    private String message;
+    private T data;
 
     @Builder
-    public RestResponseDto(HttpStatus httpStatus, Object data) {
+    public RestResponseDto(HttpStatus httpStatus, T data) {
 
         this.status = httpStatus.value();
         this.message = httpStatus.name();
