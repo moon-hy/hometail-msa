@@ -91,7 +91,6 @@ public class AuthController {
     public ResponseEntity<?> account(@RequestHeader("X-Authorization-Id") Long accontId) {
 
         Account account = accountService.getAccountById(accontId);
-        System.out.println(account.toString());
         return ResponseEntity.ok()
                 .body(RestResponseDto.builder()
                         .httpStatus(HttpStatus.OK)

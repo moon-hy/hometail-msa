@@ -26,6 +26,7 @@ public class SignupRequestDto {
     public Account toEntity() {
         return Account.builder()
                 .email(email)
-                .password(password).build();
+                .password(password)
+                .nickname(nickname).build();
     }
 }

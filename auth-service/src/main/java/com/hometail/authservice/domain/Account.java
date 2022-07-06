@@ -21,7 +21,12 @@ public class Account {
 
     @Setter
     @JsonIgnore
+    @Column(nullable = false)
     private String password;
+
+    @Setter
+    @Column(nullable = false)
+    private String nickname;
 
     @Builder.Default
     private Role role = Role.ROLE_USER;
