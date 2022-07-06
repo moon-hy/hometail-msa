@@ -3,6 +3,7 @@ package com.hometail.gatewayservice.exception;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hometail.gatewayservice.dto.ErrorResponse;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
@@ -30,7 +31,11 @@ public class CustomExceptionHandler implements ErrorWebExceptionHandler {
 
         String body = null;
 
-        if (ex instanceof JwtException) {
+        if (ex instanceof ExpiredJwtException) {
+            httpStatus = HttpStatus.UNAUTHORIZED;
+            detail = "Expired Token: ".concat(ex.getMessage());
+        }
+        else if (ex instanceof JwtException) {
             httpStatus = HttpStatus.UNAUTHORIZED;
             detail = "Invalid Token: ".concat(ex.getMessage());
         }
