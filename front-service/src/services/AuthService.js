@@ -10,7 +10,7 @@ async function login(email, password) {
     .then(response => {
         localStorage.setItem('access_token', response.data.data.access_token)
     }).catch(error => {
-        console.log(error)
+        throw error
     })
 
     return response
@@ -31,7 +31,7 @@ async function signup(email, password, nickname) {
     .then(response => {
         console.log(response.data)
     }).catch(error => {
-        console.log(error)
+        throw error
     })
     
     return response
