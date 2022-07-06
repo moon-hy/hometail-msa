@@ -31,7 +31,7 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid SignupRequestDto dto) {
+    public ResponseEntity<?> signup(@RequestBody @Valid SignupRequestDto dto) {
 
         accountService.addAccount(dto.toEntity());
         // login 으로 리다이렉트
@@ -39,7 +39,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid LoginRequestDto dto) {
+    public ResponseEntity<?> login(@RequestBody @Valid LoginRequestDto dto) {
 
         // request의 email, password 받은 entity 생성, accessToken 생성
         Account account = accountService.getAccount(dto.toEntity());
@@ -60,7 +60,7 @@ public class AuthController {
                         .data(jwtProvider.toDto(accessToken)).build());
     }
 
-    @PostMapping("/reissue")
+    @GetMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request,
                                      @RequestHeader("X-Authorization-Id") Long accountId) {
 
