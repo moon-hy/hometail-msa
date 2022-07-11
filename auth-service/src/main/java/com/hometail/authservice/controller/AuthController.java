@@ -3,14 +3,12 @@ package com.hometail.authservice.controller;
 import com.hometail.authservice.domain.Account;
 import com.hometail.authservice.dto.request.LoginRequestDto;
 import com.hometail.authservice.dto.request.SignupRequestDto;
-import com.hometail.authservice.dto.response.RestResponseDto;
 import com.hometail.authservice.service.AccountService;
 import com.hometail.authservice.service.RefreshTokenService;
 import com.hometail.authservice.utils.CookieProvider;
 import com.hometail.authservice.utils.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,9 +53,7 @@ public class AuthController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
-                .body(RestResponseDto.builder()
-                        .httpStatus(HttpStatus.OK)
-                        .data(jwtProvider.toDto(accessToken)).build());
+                .body(jwtProvider.toDto(accessToken));
     }
 
     @GetMapping("/reissue")
@@ -71,9 +67,7 @@ public class AuthController {
         String newAccessToken = refreshTokenService.reissueAccessToken(accountId, refreshToken);
 
         return ResponseEntity.ok()
-                .body(RestResponseDto.builder()
-                        .httpStatus(HttpStatus.OK)
-                        .data(jwtProvider.toDto(newAccessToken)).build());
+                .body(jwtProvider.toDto(newAccessToken));
     }
 
     @DeleteMapping("/logout")
@@ -92,8 +86,6 @@ public class AuthController {
 
         Account account = accountService.getAccountById(accontId);
         return ResponseEntity.ok()
-                .body(RestResponseDto.builder()
-                        .httpStatus(HttpStatus.OK)
-                        .data(account).build());
+                .body(account);
     }
 }

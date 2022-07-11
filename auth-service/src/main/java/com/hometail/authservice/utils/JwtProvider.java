@@ -1,8 +1,6 @@
 package com.hometail.authservice.utils;
 
 import com.hometail.authservice.dto.TokenDto;
-import com.hometail.authservice.exception.InvalidRequestException;
-import com.hometail.authservice.service.RefreshTokenService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
