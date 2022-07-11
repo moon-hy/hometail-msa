@@ -1,31 +1,42 @@
-import { Route, Routes, BrowserRouter } from "react-router-dom"
+import { CssBaseline } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import React from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import './App.css';
+import DefaultLayout from './layouts/DefaultLayout';
+import LoginPage from './pages/auth/Login';
+import LogoutPage from './pages/auth/Logout';
+import SignupPage from './pages/auth/Signup';
+import HomePage from './pages/Home';
 
-import "./styles/Container.css"
-import HomePage from "./pages/Home.js";
-import AboutPage from "./pages/About.js";
-import LoginPage from "./pages/auth/Login";
-import SignupPage from "./pages/auth/Signup";
-import LogoutPage from "./pages/auth/Logout";
-import DefaultLayout from "./layouts/DefaultLayout";
-import AuthContextProvider from "./context/AuthContextProvider";
-import ProfilePage from "./pages/auth/Profile";
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  }
+})
 
-export default function App() {
+function App() {
 
-    return (
-        <BrowserRouter>
-            <AuthContextProvider>
-                <DefaultLayout>
-                    <Routes>
-                        <Route path="/" element={<HomePage />} />
-                        <Route path="/about" element={<AboutPage />} />
-                        <Route path="/login" element={<LoginPage />} />
-                        <Route path="/signup" element={<SignupPage />} />
-                        <Route path="/logout" element={<LogoutPage />} />
-                        <Route path="/profile" element={<ProfilePage />} />
-                    </Routes>
-                </DefaultLayout>
-            </AuthContextProvider>
-        </BrowserRouter>
-    )
+  return (
+    <div style={{
+      height: '100vh',
+      backgroundColor: '#303030'
+    }}>
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <BrowserRouter>
+        <DefaultLayout>
+          <Routes>
+            <Route path="/" element={<HomePage/>}></Route>
+            <Route path="/login" element={<LoginPage/>}></Route>
+            <Route path="/logout" element={<LogoutPage/>}></Route>
+            <Route path="/signup" element={<SignupPage/>}></Route>
+          </Routes>
+        </DefaultLayout>
+      </BrowserRouter>
+    </ThemeProvider>
+    </div>
+  )
 }
+
+export default App;

@@ -1,12 +1,12 @@
-import { useContext, useState } from "react"
+import { Box, Button, Container, TextField, Typography } from "@mui/material"
+import { useState } from "react"
+import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import { AuthContext } from "../../context/AuthContextProvider"
-import {API} from "../../services"
 
-import "../../styles/style.css"
+import { validateEmail, validatePassword, validateNickname, validateEquals } from "../../utils/Validator"
 export default function SignupPage() {
 
-    const { setAuthenticated } = useContext(AuthContext)
+    const { authenticated } = useSelector(state => state.auth)
 
     const [email, setEmail] = useState("")
     const [emailNotification, setEmailNotification] = useState(false)
@@ -17,18 +17,13 @@ export default function SignupPage() {
     const [password, setPassword] = useState("")
     const [passwordNotification, setPasswordNotification] = useState(false)
 
-    const [checkPassword, setCheckPassword] = useState("")
+    const [passwordConform, setPasswordConfirm] = useState("")
     const [warning, setWarning] = useState(false)
     const navigate = useNavigate()
 
     // const email = "moraramee@gmail.com"
     // const password = "asdfqwer12!@"
     // const nickname = "MORARAMEE"
-    const validateEmail = (string) => {
-        return string.match(
-          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        )
-    }
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value)
@@ -37,12 +32,6 @@ export default function SignupPage() {
         } else {
             setEmailNotification(true)
         }
-    }
-
-    const validatePassword = (string) => {
-        return string.match(
-            /^(?=.*[0-9])(?=.*[A-z])(?=.*[!@#$%^&*()_+{}:"<>?/,./;'[\]|]).{8,20}$/
-        )
     }
 
     const handlePasswordChange = (e) => {
@@ -55,19 +44,13 @@ export default function SignupPage() {
         console.log(password)
     }
 
-    const handleCheckPasswordChange = (e) => {
-        setCheckPassword(e.target.value)
+    const handlePasswordConfirmChange = (e) => {
+        setPasswordConfirm(e.target.value)
         if (password === e.target.value || e.target.value.length === 0) {
             setPasswordNotification(false)
         } else {
             setPasswordNotification(true)
         }
-    }
-
-    const validateNickname = (string) => {
-        return string.match(
-            /^[가-힣A-z0-9]{2,16}$/
-        )
     }
 
     const handleNicknameChange = (e) => {
@@ -80,30 +63,88 @@ export default function SignupPage() {
     }
     
     const handleSignupClick =  async () => {
-        const data = await API.auth
-            .signup(email, password, nickname)
-
-        await API.auth
-            .login(email, password)
-            .then(response => {
-                setAuthenticated(true)
-                navigate('/')
-            })
-            .catch(error => {
-                console.log(error)
-            })
+        // const data = await API.auth
+        //     .signup(email, password, nickname)
+        //     .then(() => {
+        //         API.auth
+        //             .login(email, password)
+        //             .then(() => {
+        //                 setAuthenticated(true)
+        //                 navigate('/')
+        //             })
+        //             .catch(error => {
+        //                 console.log(error)
+        //             })
+        //         })
+        //     .catch(error => {
+        //         console.log(error)
+        //     })
     }
 
     return (
         <>
-            <span>Signup Page.</span>
-            <div className="input-container">
-                <input onChange={handleEmailChange} type="text" placeholder="이메일"/>
-                <input onChange={handleNicknameChange} type="text" placeholder="닉네임"/>
-                <input onChange={handlePasswordChange} type="password" placeholder="비밀번호"/>
-                <input onChange={handleCheckPasswordChange} type="password" placeholder="비밀번호 확인"/>
-                <button type="button" onClick={handleSignupClick}>Sign up</button>
-            </div>
+        <Container maxWidth="xs">
+            <Box
+                sx={{
+                    marginTop: 8,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center'
+                }}>
+                <Typography component="h1" variant="h5">
+                    Signup
+                </Typography>
+                <TextField 
+                    margin="normal"
+                    label="Email"
+                    name="email"
+                    autoFocus
+                    onChange={handleEmailChange} 
+                    error={email.length > 0 && !validateEmail(email)}
+                    helperText={!validateEmail(email) && "이메일 형식에 맞게 입력해주세요."}
+                    placeholder="이메일"
+                    fullWidth
+                />
+                <TextField 
+                    margin="normal"
+                    label="Nickname"
+                    name="nickname"
+                    onChange={handleNicknameChange}
+                    error={nickname.length > 0 && !validateNickname(nickname)}
+                    helperText={!validateNickname(nickname) && "닉네임은 2~16자의 한글, 숫자, 영어로 구성되어야 합니다."}
+                    placeholder="닉네임"
+                    fullWidth
+                />
+                <TextField
+                    margin="normal"
+                    label="Password"
+                    name="password"
+                    onChange={handlePasswordChange} 
+                    error={password.length > 0 && !validatePassword(password)}
+                    helperText={!validatePassword(password) && "비밀번호는 8~20자의 최소한 하나 이상의 영어, 숫자, 특수문자로 구성되어야 합니다."}
+                    type="password" 
+                    placeholder="비밀번호"
+                    fullWidth
+                />
+                <TextField 
+                    margin="normal"
+                    label="Password Confirm"
+                    name="passwordConfirm"
+                    onChange={handlePasswordConfirmChange} 
+                    error={!validateEquals(password, passwordConform)}
+                    helperText={!validateEquals(password, passwordConform) && "비밀번호가 일치하지 않습니다."}
+                    type="password"
+                    placeholder="비밀번호 확인"
+                    fullWidth
+                />
+                <Button 
+                    type="submit" 
+                    onClick={handleSignupClick}
+                    fullWidth
+                    variant="contained" sx={{ mt:3, mb:2 }}
+                    >Sign up</Button>
+            </Box>
+        </Container>
         </>
     )
 }

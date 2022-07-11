@@ -1,15 +1,15 @@
-import { useContext, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import { AuthContext } from "../../context/AuthContextProvider"
-import {API} from "../../services"
-export default function LogoutPage() {
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../services/auth/AuthService";
 
-    const { setAuthenticated } = useContext(AuthContext)
+export default function LogoutPage() {
+    const dispatch = useDispatch()
+    const { authenticated } = useSelector(state => state.auth)
     const navigate = useNavigate()
-    
+
     useEffect(() => {
-        API.auth.logout()
-        setAuthenticated(false)
-        navigate("/")
+        logout()
+        navigate('/')
     }, [])
 }
