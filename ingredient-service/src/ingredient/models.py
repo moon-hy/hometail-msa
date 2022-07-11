@@ -11,23 +11,39 @@ class Ingredient(models.Model):
     알코올도수
     (구매방법)
     '''
-    respresentation     = models.ForeignKey(
-        to              ="Representation", 
-        related_name    ="ingredients",
-        verbose_name    =_("Representation"), 
-        on_delete       =models.CASCADE)
+    representation = models.ForeignKey(
+        to="Representation",
+        related_name="ingredients",
+        verbose_name=_("Representation"),
+        on_delete=models.CASCADE)
 
-    name                = models.CharField(
-        verbose_name    =_("Ingredient Name"), 
-        max_length      =50)
+    name = models.CharField(
+        verbose_name=_("Ingredient Name"),
+        max_length=50,
+        unique=True,
+        db_index=True)
 
-    description         = models.TextField(
-        verbose_name    =_("Description"))
+    description = models.TextField(
+        verbose_name=_("Description"),
+        null=True)
 
-    alcohol_by_volume   = models.DecimalField(
-        verbose_name    =_("ABV"), 
-        max_digits      =5, 
-        decimal_places  =2)
+    alcohol_by_volume = models.DecimalField(
+        verbose_name=_("ABV"),
+        max_digits=5,
+        decimal_places=2,
+        default=0.0)
+
+    created_by = models.IntegerField(
+        verbose_name=_("Created User Id")
+    )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = '1_Ingredient'
+
 
 class Representation(models.Model):
     '''
@@ -35,21 +51,35 @@ class Representation(models.Model):
     [FK] 카테고리
     대표이름
     '''
-    category            = models.ForeignKey(
-        to              ="Category", 
-        verbose_name    =_("Category"), 
-        on_delete       =models.CASCADE)
+    category = models.ForeignKey(
+        to="Category",
+        verbose_name=_("Category"),
+        on_delete=models.CASCADE)
 
-    name                = models.CharField(
-        verbose_name    =_("Representation Name"), 
-        max_length      =50)
-    pass
+    name = models.CharField(
+        verbose_name=_("Representation Name"),
+        max_length=50)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = '2_Representation'
+
 
 class Category(models.Model):
     '''
     # 카테고리 테이블
     카테고리이름
     '''
-    name                = models.CharField(
-        verbose_name    =_("Category Name"), 
-        max_length      =50)
+    name = models.CharField(
+        verbose_name=_("Category Name"),
+        max_length=50)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = '3_Category'
