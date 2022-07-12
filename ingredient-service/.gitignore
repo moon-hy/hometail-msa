@@ -8,6 +8,9 @@ src/**/migrations/*
 db.sqlite3
 media
 
+# Custom #
+secrets.json
+
 # Backup files # 
 *.bak 
 

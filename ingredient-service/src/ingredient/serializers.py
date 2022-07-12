@@ -21,8 +21,8 @@ class IngredientListSerializer(IngredientSerializer):
     class Meta:
         model = Ingredient
         fields = '__all__'
-        excluded_fields = ['id', 'description',
-                           'created_by', 'alcohol_by_volume']
+        excluded_fields = [
+            'id', 'description', 'created_by', 'alcohol_by_volume']
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
