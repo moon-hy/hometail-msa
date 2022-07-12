@@ -5,6 +5,7 @@
 __pycache__
 src/**/migrations/*
 !src/**/migrations/__init__.py
+ingredient.csv
 db.sqlite3
 media
 

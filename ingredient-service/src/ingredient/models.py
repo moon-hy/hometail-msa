@@ -47,6 +47,7 @@ class Ingredient(models.Model):
 
 class Representation(models.Model):
     '''
+    - 어떤 재료를 대표하는 명칭. ex) Triple Sec, Cointreau => Orange Liqueur
     # 대표 테이블
     [FK] 카테고리
     대표이름
