@@ -1,8 +1,10 @@
+import json
+
 from rest_framework import views, status
 from rest_framework.response import Response
 
-from ingredient.models import Ingredient
-from ingredient.serializers import IngredientSerializer, IngredientListSerializer
+from ingredient.models import Category, Ingredient
+from ingredient.serializers import CategorySerializer, IngredientSerializer, IngredientListSerializer
 
 
 HEADER_AUTHORIZATION_ID = 'X-Authorization-Id'
@@ -22,6 +24,10 @@ class IngredientsView(views.APIView):
 
     def get(self, request):
         ingredients = Ingredient.objects.all()
+
+        if category:=request.query_params.get('category'):
+            ingredients = ingredients.filter(representation__category=category)
+
         serializer = self.serializer_class(ingredients, many=True)
 
         return Response(data={
@@ -68,3 +74,22 @@ class IngredientView(views.APIView):
         ingredient = Ingredient.objects.get(pk=pk)
         ingredient.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class CategoryView(views.APIView):
+    serializer_class = CategorySerializer
+
+    def get_category_links(self, categories):
+        links = {}
+        for category in categories:
+            links[category.name] = f'/ingredient-service/ingredients?category={category.id}'
+        return links
+
+    def get(self, request):
+        categories = Category.objects.all()
+        serializer = self.serializer_class(categories, many=True)
+        links = self.get_category_links(categories)
+        return Response(data={
+            'total_counts': len(serializer.data),
+            'categories': serializer.data,
+            '_links': links
+        }, status=status.HTTP_200_OK)
