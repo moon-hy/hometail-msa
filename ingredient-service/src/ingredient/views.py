@@ -55,5 +55,5 @@ class IngredientView(views.APIView):
 
     def delete(self, request, pk):
         ingredient = Ingredient.objects.get(pk=pk)
-        Ingredient.objects.delete(ingredient)
+        ingredient.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

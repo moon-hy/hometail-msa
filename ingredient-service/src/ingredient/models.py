@@ -34,8 +34,7 @@ class Ingredient(models.Model):
         default=0.0)
 
     created_by = models.IntegerField(
-        verbose_name=_("Created User Id")
-    )
+        verbose_name=_("Created User Id"))
 
     def __str__(self):
         return self.name
