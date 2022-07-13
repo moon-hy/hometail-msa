@@ -1,6 +1,4 @@
 @echo off
-del ./cocktail/migrations/000*
-del ./db.sqlite3
 python ./manage.py makemigrations
 python ./manage.py migrate
 python ./manage.py flush --no-input

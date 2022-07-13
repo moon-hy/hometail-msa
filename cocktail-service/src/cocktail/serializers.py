@@ -9,7 +9,8 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ['ingredient', 'volume', 'unit', 'optional', 'alcohol_by_volume']
+        fields = [
+            'id', 'ingredient', 'volume', 'unit', 'optional', 'alcohol_by_volume']
 
 
 class CocktailSeriralizer(serializers.ModelSerializer):
@@ -17,7 +18,9 @@ class CocktailSeriralizer(serializers.ModelSerializer):
 
     class Meta:
         model = Cocktail
-        fields = ['name', 'base', 'alcohol_by_volume', 'recipe', 'description', 'color', 'detail', 'created_by', 'tags']
+        fields = [
+            'id', 'name', 'base', 'alcohol_by_volume', 'recipe', 'description', 
+            'color', 'detail', 'created_by', 'tags']
 
     def create(self, validated_data):
         with transaction.atomic():
@@ -41,7 +44,9 @@ class CocktailListSerializer(CocktailSeriralizer):
     
     class Meta:
         model = Cocktail
-        fields = ['name', 'base', 'alcohol_by_volume', 'recipe', 'description', 'color', 'detail', 'created_by', 'tags']
+        fields = [
+            'id', 'name', 'base', 'alcohol_by_volume', 'recipe', 'description', 
+            'color', 'detail', 'created_by', 'tags']
         excluded_fields = [
             'recipe', 'description', 'ingredients', 'detail', 'created_by'
         ]

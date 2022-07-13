@@ -7,6 +7,10 @@ from cocktail.models import Cocktail
 from cocktail.serializers import CocktailListSerializer, CocktailSeriralizer
 
 
+'''
+Gateway를 통해서 오는 request는 
+X-Authorization-Id, X-Authorization-Role Header를 가지고 있음.
+'''
 HEADER_AUTHORIZATION_ID = 'X-Authorization-Id'
 HEADER_AUTHORIZATION_ROLE = 'X-Authorization-Role'
 
@@ -18,6 +22,7 @@ def parse_authorization_id(request):
 def parse_authorization_role(request):
     return request.headers.get(HEADER_AUTHORIZATION_ROLE, None)
 
+
 class CocktailsAPI(views.APIView):
     serializer_class = CocktailListSerializer
 
@@ -27,10 +32,11 @@ class CocktailsAPI(views.APIView):
 
         return Response(data={
             'cocktails': serializer.data
-        },status=status.HTTP_200_OK)
+        }, status=status.HTTP_200_OK)
 
     def post(self, request):
         '''
+        # 칵테일 등록
         request:
         {
             "name": "COCKTAIL_NAME",
@@ -40,7 +46,7 @@ class CocktailsAPI(views.APIView):
             "recipe": [
                 {
                     "ingredient": INGREDIENT_ID,
-                    "alcohol_by_volume": INGREDIENT_ABV // ingredient-service 정보
+                    "alcohol_by_volume": INGREDIENT_ABV // ingredient-service 정보, Client에서 받아옴
                     "volume": INGREDIENT_VOLUME,
                     "unit": "INGREDIENT_UNIT",
                     "optional": false
@@ -54,6 +60,7 @@ class CocktailsAPI(views.APIView):
             serializer.save(created_by=account_id)
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class CocktailAPI(views.APIView):
     serializer_class = CocktailSeriralizer
