@@ -92,7 +92,8 @@ class Tag(models.Model):
     '''
     name = models.CharField(
         verbose_name=_("Tag Name"), 
-        max_length=50)
+        max_length=50,
+        primary_key=True)
 
     def __str__(self):
         return self.name
