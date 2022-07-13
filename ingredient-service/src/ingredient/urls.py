@@ -4,6 +4,6 @@ from ingredient.views import IngredientView, IngredientsView
 
 
 urlpatterns = [
-    path('/', IngredientsView.as_view()),
-    path('/<int:pk>', IngredientView.as_view())
+    path('/ingredients', IngredientsView.as_view()),
+    path('/ingredients/<int:pk>', IngredientView.as_view())
 ]

@@ -25,7 +25,7 @@ class Ingredient(models.Model):
 
     description = models.TextField(
         verbose_name=_("Description"),
-        null=True)
+        blank=True)
 
     alcohol_by_volume = models.DecimalField(
         verbose_name=_("ABV"),
@@ -34,7 +34,8 @@ class Ingredient(models.Model):
         default=0.0)
 
     created_by = models.IntegerField(
-        verbose_name=_("Created User Id"))
+        verbose_name=_("Created User Id"),
+        blank=True)
 
     def __str__(self):
         return self.name

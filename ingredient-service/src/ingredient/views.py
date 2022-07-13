@@ -25,15 +25,26 @@ class IngredientsView(views.APIView):
         serializer = self.serializer_class(ingredients, many=True)
 
         return Response(data={
+            'total_counts': len(serializer.data),
             'ingredients': serializer.data
         }, status=status.HTTP_200_OK)
 
     def post(self, request):
+        '''
+        # 재료 등록
+        request:
+        {
+            "name": "INGREDIENT_NAME",
+            "representation": REPRESENTATION_ID,
+            "description": "INGREDIENT_DESCRIPTION",
+            "alcohol_by_volume": INGREDIENT_ABV
+        }
+        '''
         account_id = parse_authorization_id(request)
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save(created_by=account_id)
-            return Response(status=status.HTTP_201_CREATED)
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

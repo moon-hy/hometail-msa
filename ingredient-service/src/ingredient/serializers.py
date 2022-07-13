@@ -4,11 +4,13 @@ from ingredient.models import Category, Ingredient, Representation
 
 
 class IngredientSerializer(serializers.ModelSerializer):
-    created_by = serializers.IntegerField(required=False)
 
     class Meta:
         model = Ingredient
-        fields = '__all__'
+        fields = [
+            'id', 'name', 'description', 'alcohol_by_volume', 
+            'created_by', 'representation'
+        ]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -20,9 +22,12 @@ class IngredientListSerializer(IngredientSerializer):
 
     class Meta:
         model = Ingredient
-        fields = '__all__'
+        fields = [
+            'id', 'name', 'description', 'alcohol_by_volume', 
+            'created_by', 'representation'
+        ]
         excluded_fields = [
-            'id', 'description', 'created_by', 'alcohol_by_volume']
+            'description', 'created_by', 'alcohol_by_volume']
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
