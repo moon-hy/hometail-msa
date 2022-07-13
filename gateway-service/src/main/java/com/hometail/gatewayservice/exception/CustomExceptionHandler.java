@@ -46,9 +46,7 @@ public class CustomExceptionHandler implements ErrorWebExceptionHandler {
         }
 
         try {
-            body = make(ErrorResponse.builder()
-                    .httpStatus(httpStatus)
-                    .detail(detail).build());
+            body = make(new ErrorResponse(detail));
         } catch (JsonProcessingException e) {
             log.error(e.getMessage());
         }

@@ -2,7 +2,6 @@ package com.hometail.gatewayservice.util;
 
 import com.hometail.gatewayservice.dto.TokenUser;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.InitializingBean;

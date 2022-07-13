@@ -70,6 +70,7 @@ public class JwtAuthenticationGatewayFilterFactory extends
     private void addAuthorizationHeaders(ServerHttpRequest request, TokenUser tokenUser) {
         request.mutate()
                 .header("X-Authorization-Id", tokenUser.getId().toString())
+                .header("X-Authorization-Role", tokenUser.getRole())
                 .build();
     }
 
