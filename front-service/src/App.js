@@ -8,6 +8,8 @@ import LoginPage from './pages/auth/Login';
 import LogoutPage from './pages/auth/Logout';
 import SignupPage from './pages/auth/Signup';
 import HomePage from './pages/Home';
+import IngredientListPage from './pages/ingredient/IngredientListPage';
+import IngredientPage from './pages/ingredient/main';
 
 const darkTheme = createTheme({
   palette: {
@@ -31,6 +33,8 @@ function App() {
             <Route path="/login" element={<LoginPage/>}></Route>
             <Route path="/logout" element={<LogoutPage/>}></Route>
             <Route path="/signup" element={<SignupPage/>}></Route>
+            <Route path="/ingredients" element={<IngredientPage/>}></Route>
+            <Route path="/ingredients/list" element={<IngredientListPage/>}></Route>
           </Routes>
         </DefaultLayout>
       </BrowserRouter>

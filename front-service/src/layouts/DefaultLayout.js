@@ -8,7 +8,8 @@ function DefaultLayout({ children }) {
         <SearchAppBar/>
         <Box sx={{ 
             maxWidth: 900, 
-            margin: 3
+            marginTop: 3,
+            marginX: 'auto',
         }}>
             { children }
         </Box>

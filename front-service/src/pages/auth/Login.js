@@ -68,7 +68,6 @@ export default function LoginPage() {
                         margin="normal"
                         label="Email" 
                         name="email"
-                        autoComplete="email"
                         autoFocus
                         onChange={handleEmailChange}
                         error={email.length > 0 && !validateEmail(email)}
