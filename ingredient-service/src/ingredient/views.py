@@ -1,9 +1,9 @@
-import json
-
 from rest_framework import views, status
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 
 from ingredient.models import Category, Ingredient
+from ingredient.pagination import PaginationHandlerMixin
 from ingredient.serializers import CategorySerializer, IngredientSerializer, IngredientListSerializer
 
 
@@ -19,7 +19,7 @@ def parse_authorization_role(request):
     return request.headers.get(HEADER_AUTHORIZATION_ROLE, None)
 
 
-class IngredientsView(views.APIView):
+class IngredientsView(views.APIView, PaginationHandlerMixin):
     serializer_class = IngredientListSerializer
 
     def get(self, request):
@@ -31,7 +31,7 @@ class IngredientsView(views.APIView):
         serializer = self.serializer_class(ingredients, many=True)
 
         return Response(data={
-            'total_counts': len(serializer.data),
+            'count': len(serializer.data),
             'ingredients': serializer.data
         }, status=status.HTTP_200_OK)
 
@@ -89,7 +89,7 @@ class CategoryView(views.APIView):
         serializer = self.serializer_class(categories, many=True)
         links = self.get_category_links(categories)
         return Response(data={
-            'total_counts': len(serializer.data),
+            'count': len(serializer.data),
             'categories': serializer.data,
             '_links': links
         }, status=status.HTTP_200_OK)

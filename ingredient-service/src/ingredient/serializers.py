@@ -15,6 +15,9 @@ class IngredientSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['representation'] = instance.representation.name
+        data['_links'] = {
+            'detail': f'/ingredient-service/ingredients/{instance.id}'
+        }
         return data
 
 
@@ -27,7 +30,7 @@ class IngredientListSerializer(IngredientSerializer):
             'created_by', 'representation'
         ]
         excluded_fields = [
-            'description', 'created_by', 'alcohol_by_volume']
+            'description', 'created_by']
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
